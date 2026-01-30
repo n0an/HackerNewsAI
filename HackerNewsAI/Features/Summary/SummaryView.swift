@@ -2,6 +2,7 @@ import SwiftUI
 
 struct SummaryView: View {
     @State private var viewModel = SummaryViewModel()
+    @State private var markedAsRead = false
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
@@ -21,10 +22,7 @@ struct SummaryView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    Button("Done") {
-                        Task {
-                            await viewModel.markAsRead()
-                        }
+                    Button("Close") {
                         dismiss()
                     }
                 }
@@ -79,6 +77,27 @@ struct SummaryView: View {
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
+
+                Spacer(minLength: 20)
+
+                // Mark as Read button
+                Button {
+                    Task {
+                        await viewModel.markAsRead()
+                        markedAsRead = true
+                    }
+                } label: {
+                    HStack {
+                        Image(systemName: markedAsRead ? "checkmark.circle.fill" : "checkmark.circle")
+                        Text(markedAsRead ? "Marked as Read" : "Mark as Read")
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(markedAsRead ? Color.green.opacity(0.2) : Color.accentColor.opacity(0.1))
+                    .foregroundStyle(markedAsRead ? .green : .accentColor)
+                    .cornerRadius(12)
+                }
+                .disabled(markedAsRead)
             }
             .padding()
         }
