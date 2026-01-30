@@ -15,7 +15,8 @@ let package = Package(
     dependencies: [
         .package(
             url: "https://github.com/mattt/AnyLanguageModel",
-            branch: "main"
+            branch: "main",
+            traits: ["CoreML", "MLX"]
             // No traits = no MLX/CoreML, just Foundation Models + API providers
         )
     ],
