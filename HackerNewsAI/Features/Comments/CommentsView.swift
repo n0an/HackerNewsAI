@@ -43,6 +43,12 @@ struct CommentsView: View {
                         CommentRowView(node: node, collapsedIDs: $viewModel.collapsedIDs)
                             .padding(.horizontal)
                     }
+
+                    // Load More button
+                    if viewModel.hasMoreComments {
+                        loadMoreButton
+                            .padding()
+                    }
                 }
             }
         }
@@ -96,6 +102,29 @@ struct CommentsView: View {
         Text("Comments (\(viewModel.story.commentCount))")
             .font(.headline)
             .foregroundStyle(.secondary)
+    }
+
+    private var loadMoreButton: some View {
+        Button {
+            Task {
+                await viewModel.loadMoreComments()
+            }
+        } label: {
+            HStack {
+                if viewModel.isLoadingMore {
+                    ProgressView()
+                        .controlSize(.small)
+                } else {
+                    Text("Load More Comments (\(viewModel.remainingCount) remaining)")
+                }
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 12)
+            .background(Color.secondary.opacity(0.1))
+            .clipShape(RoundedRectangle(cornerRadius: 8))
+        }
+        .buttonStyle(.plain)
+        .disabled(viewModel.isLoadingMore)
     }
 }
 
