@@ -54,7 +54,7 @@ actor SummaryService {
         let hasNewStories = lastVisit == nil || stories.contains { $0.postedDate > lastVisit! }
 
         // Build the prompt
-        let prompt = buildPrompt(from: stories, lastVisit: lastVisit, timeSinceDescription: timeSinceDescription)
+        let prompt = buildPrompt(from: stories, lastVisit: lastVisit, timeSinceDescription: timeSinceDescription, hasNewStories: hasNewStories)
 
         // Generate summary using LLM
         let session = LanguageModelSession(model: model)
@@ -85,12 +85,14 @@ actor SummaryService {
         cachedSummary = nil
     }
 
-    private func buildPrompt(from stories: [HNStory], lastVisit: Date?, timeSinceDescription: String) -> String {
+    private func buildPrompt(from stories: [HNStory], lastVisit: Date?, timeSinceDescription: String, hasNewStories: Bool) -> String {
         let contextIntro: String
         if lastVisit == nil {
             contextIntro = "This is the user's first time using the app. Give them a warm welcome and summarize what's currently trending on Hacker News."
-        } else {
+        } else if hasNewStories {
             contextIntro = "The user last checked Hacker News \(timeSinceDescription). Summarize what they missed."
+        } else {
+            contextIntro = "The user last checked Hacker News \(timeSinceDescription). There are no major new stories since then, but here's what's currently trending. Let them know nothing big happened but share what's popular right now."
         }
 
         var prompt = """
