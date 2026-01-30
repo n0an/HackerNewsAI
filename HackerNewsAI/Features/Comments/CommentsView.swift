@@ -42,12 +42,24 @@ struct CommentsView: View {
                     ForEach(viewModel.commentNodes) { node in
                         CommentRowView(node: node, collapsedIDs: $viewModel.collapsedIDs)
                             .padding(.horizontal)
+                            .onAppear {
+                                // Infinite scroll: load more when last comment appears
+                                if node.id == viewModel.commentNodes.last?.id {
+                                    Task {
+                                        await viewModel.loadMoreComments()
+                                    }
+                                }
+                            }
                     }
 
-                    // Load More button
-                    if viewModel.hasMoreComments {
-                        loadMoreButton
-                            .padding()
+                    // Loading indicator for infinite scroll
+                    if viewModel.isLoadingMore {
+                        HStack {
+                            Spacer()
+                            ProgressView()
+                                .padding()
+                            Spacer()
+                        }
                     }
                 }
             }
@@ -104,28 +116,6 @@ struct CommentsView: View {
             .foregroundStyle(.secondary)
     }
 
-    private var loadMoreButton: some View {
-        Button {
-            Task {
-                await viewModel.loadMoreComments()
-            }
-        } label: {
-            HStack {
-                if viewModel.isLoadingMore {
-                    ProgressView()
-                        .controlSize(.small)
-                } else {
-                    Text("Load More Comments (\(viewModel.remainingCount) remaining)")
-                }
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 12)
-            .background(Color.secondary.opacity(0.1))
-            .clipShape(RoundedRectangle(cornerRadius: 8))
-        }
-        .buttonStyle(.plain)
-        .disabled(viewModel.isLoadingMore)
-    }
 }
 
 struct StoryHeaderView: View {
