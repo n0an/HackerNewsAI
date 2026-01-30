@@ -15,43 +15,39 @@ struct PostRowView: View {
                                 .aspectRatio(contentMode: .fit)
                         } placeholder: {
                             Image(systemName: "globe")
+                                .font(.caption2)
                         }
-                        .frame(width: 16, height: 16)
-                        .clipShape(RoundedRectangle(cornerRadius: 4))
+                        .frame(width: 14, height: 14)
+                        .clipShape(RoundedRectangle(cornerRadius: 3))
 
                         Text(domain)
-                            .font(.subheadline)
+                            .font(.footnote)
                     }
                     .foregroundStyle(.secondary)
                 }
 
                 // Title
                 Text(story.title)
-                    .font(.title3)
+                    .font(.headline)
                     .fontWeight(.medium)
                     .foregroundStyle(.primary)
                     .lineLimit(3)
 
                 // Metadata row
-                HStack(spacing: 16) {
-                    Label(story.by, systemImage: "person")
-
-                    Label(story.relativeTime, systemImage: "calendar")
-
-                    Label("\(story.score)", systemImage: "hand.thumbsup")
-
-                    Label("\(story.commentCount)", systemImage: "list.bullet")
+                HStack(spacing: 12) {
+                    MetadataItem(icon: "person", text: story.by)
+                    MetadataItem(icon: "calendar", text: story.relativeTime)
+                    MetadataItem(icon: "hand.thumbsup", text: "\(story.score)")
+                    MetadataItem(icon: "list.bullet", text: "\(story.commentCount)")
                 }
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
             }
 
             Spacer()
 
             Image(systemName: "chevron.right")
-                .font(.subheadline)
+                .font(.caption)
                 .fontWeight(.semibold)
-                .foregroundStyle(.tertiary)
+                .foregroundStyle(Color(.tertiaryLabel))
         }
         .padding(.vertical, 8)
     }
@@ -61,28 +57,49 @@ struct PostRowView: View {
     }
 }
 
+struct MetadataItem: View {
+    let icon: String
+    let text: String
+
+    var body: some View {
+        HStack(spacing: 4) {
+            Image(systemName: icon)
+                .font(.system(size: 10))
+                .foregroundStyle(.secondary)
+                .frame(width: 20, height: 20)
+                .background(Color(.systemGray5))
+                .clipShape(Circle())
+
+            Text(text)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .lineLimit(1)
+        }
+    }
+}
+
 #Preview {
     List {
         PostRowView(story: HNStory(
             id: 1,
-            title: "Microsoft Just Killed the \"Cover for Me\" Excuse: 365 Now Tracks You in Real-Time",
-            by: "imalerba",
-            score: 105,
-            time: Int(Date().timeIntervalSince1970) - 3300,
-            descendants: 91,
-            url: "https://ztechtalk.com/article",
+            title: "GOG: Linux \"the next major frontier\" for gaming as it works on a native client",
+            by: "franczesko",
+            score: 493,
+            time: Int(Date().timeIntervalSince1970) - 36000,
+            descendants: 285,
+            url: "https://xda-developers.com/article",
             text: nil,
             type: "story"
         ))
 
         PostRowView(story: HNStory(
             id: 2,
-            title: "Moltbook is the most interesting place on the internet",
-            by: "swolpers",
-            score: 27,
-            time: Int(Date().timeIntervalSince1970) - 3480,
-            descendants: 20,
-            url: "https://simonwillison.net/post",
+            title: "Microsoft Just Killed the \"Cover for Me\" Excuse: 365 Now Tracks You in Real-Time",
+            by: "imalerba",
+            score: 105,
+            time: Int(Date().timeIntervalSince1970) - 3300,
+            descendants: 91,
+            url: "https://ztechtalk.com/article",
             text: nil,
             type: "story"
         ))
@@ -95,18 +112,6 @@ struct PostRowView: View {
             time: Int(Date().timeIntervalSince1970) - 14400,
             descendants: 36,
             url: "https://github.com/example/amla",
-            text: nil,
-            type: "story"
-        ))
-
-        PostRowView(story: HNStory(
-            id: 4,
-            title: "Moltbook",
-            by: "teej",
-            score: 897,
-            time: Int(Date().timeIntervalSince1970) - 50400,
-            descendants: 453,
-            url: "https://www.moltbook.com",
             text: nil,
             type: "story"
         ))
