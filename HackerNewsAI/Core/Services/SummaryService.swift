@@ -23,6 +23,13 @@ actor SummaryService {
         switch settings.provider {
         case .onDevice:
             return LanguageModelSession(model: SystemLanguageModel.default)
+        case .mlx:
+            #if canImport(MLXLLM)
+            let model = MLXLanguageModel(modelId: settings.mlxModelId)
+            return LanguageModelSession(model: model)
+            #else
+            throw SummaryError.mlxNotAvailable
+            #endif
         case .anthropic:
             guard settings.isAnthropicConfigured else {
                 throw SummaryError.apiKeyMissing
@@ -142,6 +149,7 @@ actor SummaryService {
 enum SummaryError: LocalizedError {
     case noStoriesAvailable
     case apiKeyMissing
+    case mlxNotAvailable
 
     var errorDescription: String? {
         switch self {
@@ -149,6 +157,8 @@ enum SummaryError: LocalizedError {
             return "No stories available at the moment."
         case .apiKeyMissing:
             return "Anthropic API key is not configured. Please add it in Settings."
+        case .mlxNotAvailable:
+            return "MLX models are only available on macOS with Apple Silicon."
         }
     }
 }
