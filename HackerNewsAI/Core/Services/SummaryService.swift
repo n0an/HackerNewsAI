@@ -90,14 +90,53 @@ actor SummaryService {
     private func generateResponse(prompt: String) async throws -> String {
         let settings = SettingsService.shared
 
+        let rawResponse: String
         switch settings.provider {
         case .onDevice:
-            return try await generateWithFoundationModel(prompt: prompt)
+            rawResponse = try await generateWithFoundationModel(prompt: prompt)
         case .mlx:
-            return try await generateWithMLX(prompt: prompt, modelId: settings.mlxModelId)
+            rawResponse = try await generateWithMLX(prompt: prompt, modelId: settings.mlxModelId)
         case .anthropic:
-            return try await generateWithAnthropic(prompt: prompt)
+            rawResponse = try await generateWithAnthropic(prompt: prompt)
         }
+
+        return stripThinkingTags(from: rawResponse)
+    }
+
+    private func stripThinkingTags(from text: String) -> String {
+        var processedText = text
+
+        // Step 1: Remove thinking/reasoning tags WITH their content (discard AI's chain-of-thought)
+        let thinkingPatterns = [
+            #"(?s)<thinking>(.*?)</thinking>"#,
+            #"(?s)<think>(.*?)</think>"#,
+            #"(?s)<reasoning>(.*?)</reasoning>"#
+        ]
+
+        for pattern in thinkingPatterns {
+            if let regex = try? NSRegularExpression(pattern: pattern) {
+                let range = NSRange(processedText.startIndex..., in: processedText)
+                processedText = regex.stringByReplacingMatches(in: processedText, options: [], range: range, withTemplate: "")
+            }
+        }
+
+        processedText = processedText.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        // Step 2: Unwrap any XML tags that wrap the entire text (keep content, remove wrapper)
+        processedText = unwrapOuterXMLTags(processedText)
+
+        return processedText
+    }
+
+    private func unwrapOuterXMLTags(_ text: String) -> String {
+        // Match pattern like <TAG>content</TAG> where TAG wraps the entire text
+        let pattern = #"^<([A-Za-z_][A-Za-z0-9_]*)>\s*([\s\S]*?)\s*</\1>$"#
+        guard let regex = try? NSRegularExpression(pattern: pattern),
+              let match = regex.firstMatch(in: text, range: NSRange(text.startIndex..., in: text)),
+              let contentRange = Range(match.range(at: 2), in: text) else {
+            return text
+        }
+        return String(text[contentRange]).trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
     private func generateWithFoundationModel(prompt: String) async throws -> String {
