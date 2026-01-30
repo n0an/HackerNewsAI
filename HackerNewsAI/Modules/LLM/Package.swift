@@ -18,7 +18,7 @@ let package = Package(
             url: "https://github.com/mattt/AnyLanguageModel",
             branch: "main"
         ),
-        // MLX directly from mlx-swift-lm for macOS
+        // MLX directly from mlx-swift-lm
         .package(
             url: "https://github.com/ml-explore/mlx-swift-lm",
             from: "2.30.0"
