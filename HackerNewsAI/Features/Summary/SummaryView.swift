@@ -13,7 +13,11 @@ struct SummaryView: View {
                 } else if let error = viewModel.error {
                     errorView(error: error)
                 } else if let summary = viewModel.summary {
-                    summaryContent(summary)
+                    if summary.isAllCaughtUp {
+                        allCaughtUpView(summary)
+                    } else {
+                        summaryContent(summary)
+                    }
                 } else {
                     loadingView
                 }
@@ -27,7 +31,7 @@ struct SummaryView: View {
                     }
                 }
 
-                if viewModel.summary != nil && !viewModel.isLoading {
+                if let summary = viewModel.summary, !summary.isAllCaughtUp, !viewModel.isLoading {
                     ToolbarItem(placement: .topBarTrailing) {
                         Button {
                             Task {
@@ -44,6 +48,28 @@ struct SummaryView: View {
             if viewModel.summary == nil {
                 await viewModel.generateSummary()
             }
+        }
+    }
+
+    private func allCaughtUpView(_ summary: CatchUpSummary) -> some View {
+        VStack(spacing: 24) {
+            Spacer()
+
+            Image(systemName: "checkmark.circle.fill")
+                .font(.system(size: 64))
+                .foregroundStyle(.green)
+
+            Text("You're all caught up!")
+                .font(.title2)
+                .fontWeight(.semibold)
+
+            Text("No significant new stories since your last visit \(summary.timeSinceLastVisit).\n\nCheck back later for updates.")
+                .font(.body)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 32)
+
+            Spacer()
         }
     }
 
@@ -64,8 +90,10 @@ struct SummaryView: View {
                 Divider()
 
                 // Summary content
-                Text(summary.summary)
-                    .font(.body)
+                if let summaryText = summary.summary {
+                    Text(summaryText)
+                        .font(.body)
+                }
 
                 Divider()
 

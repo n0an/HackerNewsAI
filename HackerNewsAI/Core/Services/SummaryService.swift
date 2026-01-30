@@ -6,6 +6,9 @@ actor SummaryService {
     private let lastVisitService: LastVisitService
     private var cachedSummary: CatchUpSummary?
 
+    // Minimum time before generating a new summary (30 minutes)
+    private let minimumTimeBetweenSummaries: TimeInterval = 30 * 60
+
     private let model = SystemLanguageModel.default
 
     init(
@@ -25,6 +28,20 @@ actor SummaryService {
 
         let lastVisit = await lastVisitService.getLastVisit()
         let timeSinceDescription = await lastVisitService.formattedTimeSinceLastVisit()
+
+        // Check if user visited recently - if so, they're "all caught up"
+        if let lastVisit = lastVisit {
+            let timeSinceLastVisit = Date().timeIntervalSince(lastVisit)
+
+            if timeSinceLastVisit < minimumTimeBetweenSummaries {
+                let summary = CatchUpSummary.allCaughtUp(
+                    lastVisit: lastVisit,
+                    timeSince: timeSinceDescription
+                )
+                cachedSummary = summary
+                return summary
+            }
+        }
 
         // Fetch stories since last visit
         let stories = try await hnService.fetchStoriesSince(lastVisit, limit: 50)
@@ -49,6 +66,7 @@ actor SummaryService {
             lastVisit: lastVisit,
             timeSinceLastVisit: timeSinceDescription,
             hasNewStories: hasNewStories,
+            isAllCaughtUp: false,
             generatedAt: Date()
         )
 
