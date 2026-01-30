@@ -1,64 +1,8 @@
+// SettingsService - HackerNewsAI
+// Copyright 2026
+
 import Foundation
-
-enum LLMProvider: String, CaseIterable {
-    case onDevice = "on_device"
-    case mlx = "mlx"
-    case anthropic = "anthropic"
-
-    var displayName: String {
-        switch self {
-        case .onDevice: return "On-Device (Apple)"
-        case .mlx: return "MLX (Local)"
-        case .anthropic: return "Claude (Anthropic)"
-        }
-    }
-
-    var description: String {
-        switch self {
-        case .onDevice: return "Uses Apple's Foundation Models. Free, private, requires iOS 26+."
-        case .mlx: return "Uses MLX models on Apple Silicon. Free, private, downloads model once."
-        case .anthropic: return "Uses Claude API. Requires API key, best quality."
-        }
-    }
-
-    var requiresAPIKey: Bool {
-        self == .anthropic
-    }
-
-    /// Providers available on current platform
-    static var availableOnCurrentPlatform: [LLMProvider] {
-        // MLX works on both macOS and iOS with Apple Silicon
-        return allCases
-    }
-}
-
-struct MLXModelOption: Identifiable {
-    let id: String
-    let displayName: String
-    let size: String
-    let description: String
-
-    static let available: [MLXModelOption] = [
-        MLXModelOption(
-            id: "mlx-community/Qwen3-0.6B-4bit",
-            displayName: "Qwen3 0.6B",
-            size: "~400MB",
-            description: "Fastest, minimal memory"
-        ),
-        MLXModelOption(
-            id: "mlx-community/Qwen3-4B-4bit",
-            displayName: "Qwen3 4B",
-            size: "~2.5GB",
-            description: "Best balance of speed and quality"
-        ),
-        MLXModelOption(
-            id: "mlx-community/Llama-3.2-3B-Instruct-4bit",
-            displayName: "Llama 3.2 3B",
-            size: "~2GB",
-            description: "Good quality, moderate size"
-        ),
-    ]
-}
+import LLM
 
 @Observable
 class SettingsService {
@@ -93,6 +37,15 @@ class SettingsService {
 
     var selectedMLXModel: MLXModelOption? {
         MLXModelOption.available.first { $0.id == mlxModelId }
+    }
+
+    /// Get current LLM configuration
+    var llmConfiguration: LLMConfiguration {
+        LLMConfiguration(
+            provider: provider,
+            anthropicAPIKey: anthropicAPIKey,
+            mlxModelId: mlxModelId
+        )
     }
 
     private init() {
