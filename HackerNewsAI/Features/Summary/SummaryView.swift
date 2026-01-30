@@ -63,7 +63,7 @@ struct SummaryView: View {
                 .font(.title2)
                 .fontWeight(.semibold)
 
-            Text("No significant new stories since your last visit \(summary.timeSinceLastVisit).\n\nCheck back later for updates.")
+            Text("You checked \(summary.timeSinceLastVisit).\n\nCheck back later for updates.")
                 .font(.body)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
@@ -81,7 +81,7 @@ struct SummaryView: View {
                 .frame(maxWidth: .infinity)
                 .padding()
                 .background(Color.accentColor.opacity(0.1))
-                .foregroundStyle(.accentColor)
+                .foregroundStyle(Color.accentColor)
                 .cornerRadius(12)
             }
             .padding(.horizontal, 32)
@@ -139,7 +139,7 @@ struct SummaryView: View {
                     .frame(maxWidth: .infinity)
                     .padding()
                     .background(markedAsRead ? Color.green.opacity(0.2) : Color.accentColor.opacity(0.1))
-                    .foregroundStyle(markedAsRead ? .green : .accentColor)
+                    .foregroundStyle(markedAsRead ? Color.green : Color.accentColor)
                     .cornerRadius(12)
                 }
                 .disabled(markedAsRead)
