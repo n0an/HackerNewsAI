@@ -47,8 +47,11 @@ struct CommentsView: View {
             }
         }
         .navigationTitle("Comments")
+        #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
+        #endif
         .toolbar {
+            #if os(iOS)
             ToolbarItem(placement: .bottomBar) {
                 if viewModel.story.storyURL != nil {
                     Button {
@@ -58,15 +61,35 @@ struct CommentsView: View {
                     }
                 }
             }
+            #else
+            ToolbarItem(placement: .primaryAction) {
+                if viewModel.story.storyURL != nil {
+                    Button {
+                        showBrowser = true
+                    } label: {
+                        Label("Read Article", systemImage: "doc.text")
+                    }
+                }
+            }
+            #endif
         }
         .task {
             await viewModel.loadComments()
         }
+        #if os(iOS)
         .fullScreenCover(isPresented: $showBrowser) {
             if let url = viewModel.story.storyURL {
                 BrowserView(url: url)
             }
         }
+        #else
+        .sheet(isPresented: $showBrowser) {
+            if let url = viewModel.story.storyURL {
+                BrowserView(url: url)
+                    .frame(minWidth: 800, minHeight: 600)
+            }
+        }
+        #endif
     }
 
     private var commentsHeader: some View {
@@ -138,9 +161,11 @@ struct BrowserView: View {
             WebView(url: url)
                 .ignoresSafeArea(edges: .bottom)
                 .navigationTitle(url.host ?? "Article")
+                #if os(iOS)
                 .navigationBarTitleDisplayMode(.inline)
+                #endif
                 .toolbar {
-                    ToolbarItem(placement: .topBarLeading) {
+                    ToolbarItem(placement: .cancellationAction) {
                         Button("Done") {
                             dismiss()
                         }

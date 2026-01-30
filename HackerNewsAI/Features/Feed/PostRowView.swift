@@ -58,7 +58,7 @@ struct MetadataItem: View {
                 .font(.system(size: 10))
                 .foregroundStyle(.secondary)
                 .frame(width: 20, height: 20)
-                .background(Color(.systemGray5))
+                .background(Color.secondary.opacity(0.15))
                 .clipShape(Circle())
 
             Text(text)

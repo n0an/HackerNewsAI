@@ -35,7 +35,7 @@ struct FeedView: View {
             }
             .navigationTitle("Hacker News")
             .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
+                ToolbarItem(placement: .primaryAction) {
                     Button {
                         showSettings = true
                     } label: {

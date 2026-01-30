@@ -23,16 +23,18 @@ struct SummaryView: View {
                 }
             }
             .navigationTitle("Catch Up")
+            #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
+            #endif
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
+                ToolbarItem(placement: .cancellationAction) {
                     Button("Close") {
                         dismiss()
                     }
                 }
 
                 if let summary = viewModel.summary, !summary.isAllCaughtUp, !viewModel.isLoading {
-                    ToolbarItem(placement: .topBarTrailing) {
+                    ToolbarItem(placement: .primaryAction) {
                         Button {
                             Task {
                                 await viewModel.regenerate()

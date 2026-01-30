@@ -58,7 +58,9 @@ struct SettingsView: View {
                         SecureField("API Key", text: $apiKeyInput)
                             .textContentType(.password)
                             .autocorrectionDisabled()
+                            #if os(iOS)
                             .textInputAutocapitalization(.never)
+                            #endif
                             .onAppear {
                                 apiKeyInput = settings.anthropicAPIKey
                             }
@@ -102,9 +104,11 @@ struct SettingsView: View {
                 }
             }
             .navigationTitle("Settings")
+            #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
+            #endif
             .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
+                ToolbarItem(placement: .confirmationAction) {
                     Button("Done") {
                         dismiss()
                     }
