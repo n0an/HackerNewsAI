@@ -76,3 +76,4 @@ Thumbs.db
 *.dSYM
 
 llmtemp
+.DS_Store
