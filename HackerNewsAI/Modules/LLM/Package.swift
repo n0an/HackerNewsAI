@@ -3,13 +3,6 @@
 
 import PackageDescription
 
-// MLX is Apple Silicon only
-#if os(Linux)
-let anyLanguageModelTraits: Set<Package.Dependency.Trait> = []
-#else
-let anyLanguageModelTraits: Set<Package.Dependency.Trait> = ["MLX"]
-#endif
-
 let package = Package(
     name: "LLM",
     platforms: [.iOS(.v18), .macOS(.v14)],
@@ -22,8 +15,8 @@ let package = Package(
     dependencies: [
         .package(
             url: "https://github.com/mattt/AnyLanguageModel",
-            branch: "main",
-            traits: anyLanguageModelTraits
+            branch: "main"
+            // No traits = no MLX/CoreML, just Foundation Models + API providers
         )
     ],
     targets: [
