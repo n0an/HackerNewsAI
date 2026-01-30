@@ -3,6 +3,7 @@ import SwiftUI
 struct FeedView: View {
     @State private var viewModel = FeedViewModel()
     @State private var showSummary = false
+    @State private var showSettings = false
 
     var body: some View {
         NavigationStack {
@@ -33,6 +34,15 @@ struct FeedView: View {
                 }
             }
             .navigationTitle("Hacker News")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        showSettings = true
+                    } label: {
+                        Image(systemName: "gearshape")
+                    }
+                }
+            }
             .refreshable {
                 await viewModel.refresh()
             }
@@ -44,6 +54,9 @@ struct FeedView: View {
         }
         .sheet(isPresented: $showSummary) {
             SummaryView()
+        }
+        .sheet(isPresented: $showSettings) {
+            SettingsView()
         }
     }
 

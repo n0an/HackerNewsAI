@@ -9,14 +9,30 @@ actor SummaryService {
     // Minimum time before generating a new summary (30 minutes)
     private let minimumTimeBetweenSummaries: TimeInterval = 30 * 60
 
-    private let model = SystemLanguageModel.default
-
     init(
         hnService: HackerNewsService = HackerNewsService(),
         lastVisitService: LastVisitService = LastVisitService()
     ) {
         self.hnService = hnService
         self.lastVisitService = lastVisitService
+    }
+
+    private func createSession() throws -> LanguageModelSession {
+        let settings = SettingsService.shared
+
+        switch settings.provider {
+        case .onDevice:
+            return LanguageModelSession(model: SystemLanguageModel.default)
+        case .anthropic:
+            guard settings.isAnthropicConfigured else {
+                throw SummaryError.apiKeyMissing
+            }
+            let model = AnthropicLanguageModel(
+                apiKey: settings.anthropicAPIKey,
+                model: "claude-sonnet-4-5-20250929"
+            )
+            return LanguageModelSession(model: model)
+        }
     }
 
     func generateCatchUpSummary(forceRegenerate: Bool = false) async throws -> CatchUpSummary {
@@ -57,7 +73,7 @@ actor SummaryService {
         let prompt = buildPrompt(from: stories, lastVisit: lastVisit, timeSinceDescription: timeSinceDescription, hasNewStories: hasNewStories)
 
         // Generate summary using LLM
-        let session = LanguageModelSession(model: model)
+        let session = try createSession()
         let response = try await session.respond(to: prompt)
 
         let summary = CatchUpSummary(
@@ -124,11 +140,14 @@ actor SummaryService {
 
 enum SummaryError: LocalizedError {
     case noStoriesAvailable
+    case apiKeyMissing
 
     var errorDescription: String? {
         switch self {
         case .noStoriesAvailable:
             return "No stories available at the moment."
+        case .apiKeyMissing:
+            return "Anthropic API key is not configured. Please add it in Settings."
         }
     }
 }
