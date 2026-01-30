@@ -17,11 +17,14 @@ struct SummaryView: View {
                     loadingView
                 }
             }
-            .navigationTitle("Today's Summary")
+            .navigationTitle("Catch Up")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    Button("Close") {
+                    Button("Done") {
+                        Task {
+                            await viewModel.markAsRead()
+                        }
                         dismiss()
                     }
                 }
@@ -46,18 +49,33 @@ struct SummaryView: View {
         }
     }
 
-    private func summaryContent(_ summary: DailySummary) -> some View {
+    private func summaryContent(_ summary: CatchUpSummary) -> some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
+                // Time context header
+                if summary.isFirstVisit {
+                    Label("Welcome!", systemImage: "hand.wave")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                } else {
+                    Label("Last visited \(summary.timeSinceLastVisit)", systemImage: "clock")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
+
+                Divider()
+
+                // Summary content
                 Text(summary.summary)
                     .font(.body)
 
                 Divider()
 
+                // Footer info
                 HStack {
                     Image(systemName: "info.circle")
                         .foregroundStyle(.secondary)
-                    Text("Generated from \(summary.storyCount) stories")
+                    Text("Based on \(summary.storyCount) top stories")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
@@ -70,10 +88,10 @@ struct SummaryView: View {
         VStack(spacing: 16) {
             ProgressView()
                 .scaleEffect(1.5)
-            Text("Analyzing today's news...")
+            Text("Catching you up...")
                 .font(.headline)
                 .foregroundStyle(.secondary)
-            Text("This may take a moment")
+            Text("Analyzing recent stories")
                 .font(.caption)
                 .foregroundStyle(.tertiary)
         }

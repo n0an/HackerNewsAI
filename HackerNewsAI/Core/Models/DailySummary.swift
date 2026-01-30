@@ -1,12 +1,14 @@
 import Foundation
 
-struct DailySummary {
-    let date: Date
+struct CatchUpSummary {
     let summary: String
     let storyCount: Int
+    let lastVisit: Date?
+    let timeSinceLastVisit: String
+    let hasNewStories: Bool
     let generatedAt: Date
 
-    var isFromToday: Bool {
-        Calendar.current.isDateInToday(date)
+    var isFirstVisit: Bool {
+        lastVisit == nil
     }
 }

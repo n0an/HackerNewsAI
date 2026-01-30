@@ -3,7 +3,7 @@ import Observation
 
 @Observable
 class SummaryViewModel {
-    var summary: DailySummary?
+    var summary: CatchUpSummary?
     var isLoading = false
     var error: Error?
 
@@ -15,7 +15,7 @@ class SummaryViewModel {
         error = nil
 
         do {
-            summary = try await service.generateTodaySummary(forceRegenerate: forceRegenerate)
+            summary = try await service.generateCatchUpSummary(forceRegenerate: forceRegenerate)
         } catch {
             self.error = error
         }
@@ -28,7 +28,8 @@ class SummaryViewModel {
         await generateSummary(forceRegenerate: true)
     }
 
-    var hasCachedSummary: Bool {
-        summary != nil
+    @MainActor
+    func markAsRead() async {
+        await service.markAsRead()
     }
 }

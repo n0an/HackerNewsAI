@@ -37,33 +37,45 @@ actor HackerNewsService {
     func fetchStories(ids: [Int], limit: Int = 30) async throws -> [HNStory] {
         let idsToFetch = Array(ids.prefix(limit))
 
-        return try await withThrowingTaskGroup(of: HNStory?.self) { group in
-            for id in idsToFetch {
+        return try await withThrowingTaskGroup(of: (Int, HNStory?).self) { group in
+            for (index, id) in idsToFetch.enumerated() {
                 group.addTask {
-                    try await self.fetchStory(id: id)
+                    (index, try await self.fetchStory(id: id))
                 }
             }
 
-            var stories: [HNStory] = []
-            for try await story in group {
+            var indexedStories: [(Int, HNStory)] = []
+            for try await (index, story) in group {
                 if let story {
-                    stories.append(story)
+                    indexedStories.append((index, story))
                 }
             }
 
-            // Sort by score descending to maintain relevance order
-            return stories.sorted { $0.score > $1.score }
+            // Preserve HN ranking order
+            return indexedStories.sorted { $0.0 < $1.0 }.map { $0.1 }
         }
     }
 
-    func fetchTodaysTopStories(limit: Int = 50) async throws -> [HNStory] {
+    func fetchStoriesSince(_ date: Date?, limit: Int = 50) async throws -> [HNStory] {
         let ids = try await fetchTopStoryIDs()
-        let stories = try await fetchStories(ids: ids, limit: min(limit * 2, 100))
+        // Fetch more to account for filtering
+        let stories = try await fetchStories(ids: ids, limit: min(limit * 3, 150))
 
-        // Filter to today's stories only
-        let todaysStories = stories.filter { $0.isFromToday }
+        guard let sinceDate = date else {
+            // First visit - return top stories
+            return Array(stories.prefix(limit))
+        }
 
-        return Array(todaysStories.prefix(limit))
+        // Filter to stories posted since last visit
+        let recentStories = stories.filter { $0.postedDate > sinceDate }
+
+        if recentStories.isEmpty {
+            // No new stories since last visit - return current top stories
+            // but indicate they might have seen these
+            return Array(stories.prefix(limit))
+        }
+
+        return Array(recentStories.prefix(limit))
     }
 
     func fetchComment(id: Int) async throws -> HNComment? {
