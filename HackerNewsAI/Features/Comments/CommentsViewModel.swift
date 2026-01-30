@@ -16,7 +16,7 @@ class CommentsViewModel {
     // Pagination
     private var allCommentIDs: [Int] = []
     private var loadedCount = 0
-    private let pageSize = 15
+    private let pageSize = 10
 
     var hasMoreComments: Bool {
         loadedCount < allCommentIDs.count

@@ -11,7 +11,7 @@ class FeedViewModel {
     private let service = HackerNewsService()
     private var allStoryIDs: [Int] = []
     private var loadedCount = 0
-    private let pageSize = 30
+    private let pageSize = 20
 
     @MainActor
     func loadTopStories() async {
