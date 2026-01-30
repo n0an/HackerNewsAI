@@ -152,14 +152,33 @@ struct SummaryView: View {
 
     private var loadingView: some View {
         VStack(spacing: 16) {
-            ProgressView()
-                .scaleEffect(1.5)
-            Text("Catching you up...")
-                .font(.headline)
-                .foregroundStyle(.secondary)
-            Text("Analyzing recent stories")
-                .font(.caption)
-                .foregroundStyle(.tertiary)
+            if let progress = viewModel.downloadProgress, progress < 1.0 {
+                // Model downloading - show progress
+                VStack(spacing: 12) {
+                    ProgressView(value: progress)
+                        .progressViewStyle(.linear)
+                        .frame(width: 200)
+
+                    Text("Downloading model...")
+                        .font(.headline)
+                        .foregroundStyle(.secondary)
+
+                    Text("\(Int(progress * 100))%")
+                        .font(.caption)
+                        .foregroundStyle(.tertiary)
+                        .monospacedDigit()
+                }
+            } else {
+                // Normal loading - generating summary
+                ProgressView()
+                    .scaleEffect(1.5)
+                Text("Catching you up...")
+                    .font(.headline)
+                    .foregroundStyle(.secondary)
+                Text("Analyzing recent stories")
+                    .font(.caption)
+                    .foregroundStyle(.tertiary)
+            }
         }
     }
 

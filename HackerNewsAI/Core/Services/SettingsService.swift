@@ -27,11 +27,8 @@ enum LLMProvider: String, CaseIterable {
 
     /// Providers available on current platform
     static var availableOnCurrentPlatform: [LLMProvider] {
-        #if os(macOS)
+        // MLX works on both macOS and iOS with Apple Silicon
         return allCases
-        #else
-        return allCases.filter { $0 != .mlx }
-        #endif
     }
 }
 

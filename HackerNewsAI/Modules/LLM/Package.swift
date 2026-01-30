@@ -13,11 +13,15 @@ let package = Package(
         ),
     ],
     dependencies: [
+        // AnyLanguageModel for Foundation Models + Anthropic (no MLX trait needed)
         .package(
             url: "https://github.com/mattt/AnyLanguageModel",
-            branch: "main",
-            traits: ["CoreML", "MLX"]
-            // No traits = no MLX/CoreML, just Foundation Models + API providers
+            branch: "main"
+        ),
+        // MLX directly from mlx-swift-lm for macOS
+        .package(
+            url: "https://github.com/ml-explore/mlx-swift-lm",
+            from: "2.30.0"
         )
     ],
     targets: [
@@ -25,6 +29,9 @@ let package = Package(
             name: "LLM",
             dependencies: [
                 .product(name: "AnyLanguageModel", package: "AnyLanguageModel"),
+                // MLX works on both macOS and iOS with Apple Silicon
+                .product(name: "MLXLLM", package: "mlx-swift-lm"),
+                .product(name: "MLXLMCommon", package: "mlx-swift-lm"),
             ]
         ),
         .testTarget(

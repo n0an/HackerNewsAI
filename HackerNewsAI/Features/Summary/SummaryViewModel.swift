@@ -1,18 +1,39 @@
+// SummaryViewModel - HackerNewsAI
+// Copyright 2026
+
 import Foundation
-import Observation
 
 @Observable
+@MainActor
 class SummaryViewModel {
     var summary: CatchUpSummary?
     var isLoading = false
     var error: Error?
 
+    // Download progress (0.0 to 1.0), nil when not downloading
+    var downloadProgress: Double?
+    var isDownloadingModel: Bool { downloadProgress != nil && downloadProgress! < 1.0 }
+
     private let service = SummaryService()
 
-    @MainActor
+    init() {
+        setupProgressTracking()
+    }
+
+    private func setupProgressTracking() {
+        Task {
+            await service.setProgressCallback { [weak self] progress in
+                Task { @MainActor in
+                    self?.downloadProgress = progress
+                }
+            }
+        }
+    }
+
     func generateSummary(forceRegenerate: Bool = false) async {
         isLoading = true
         error = nil
+        downloadProgress = nil
 
         do {
             summary = try await service.generateCatchUpSummary(forceRegenerate: forceRegenerate)
@@ -21,17 +42,17 @@ class SummaryViewModel {
         }
 
         isLoading = false
+        downloadProgress = nil
     }
 
-    @MainActor
     func regenerate() async {
         await generateSummary(forceRegenerate: true)
     }
 
-    @MainActor
     func forceGenerateSummary() async {
         isLoading = true
         error = nil
+        downloadProgress = nil
 
         do {
             summary = try await service.generateCatchUpSummary(forceRegenerate: true, bypassTimeCheck: true)
@@ -40,9 +61,9 @@ class SummaryViewModel {
         }
 
         isLoading = false
+        downloadProgress = nil
     }
 
-    @MainActor
     func markAsRead() async {
         await service.markAsRead()
     }

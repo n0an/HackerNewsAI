@@ -35,21 +35,22 @@ struct SettingsView: View {
                                 .tag(model.id)
                             }
                         }
+                        #if os(macOS)
                         .pickerStyle(.inline)
+                        #endif
 
-                        if let selected = settings.selectedMLXModel {
-                            HStack {
-                                Image(systemName: "info.circle")
-                                    .foregroundStyle(.secondary)
-                                Text("Model will be downloaded on first use (~\(selected.size))")
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                            }
+                        // Info about download
+                        HStack {
+                            Image(systemName: "info.circle")
+                                .foregroundStyle(.secondary)
+                            Text("Model will download on first use (~\(settings.selectedMLXModel?.size ?? ""))")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
                         }
                     } header: {
                         Text("MLX Model")
                     } footer: {
-                        Text("MLX models run locally on Apple Silicon. The model is downloaded once and cached.")
+                        Text("MLX models run locally on Apple Silicon. Models are downloaded once and cached.")
                     }
                 }
 
