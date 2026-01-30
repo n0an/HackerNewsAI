@@ -3,18 +3,34 @@ import SwiftUI
 struct FeedView: View {
     @State private var viewModel = FeedViewModel()
     @State private var selectedStory: HNStory?
+    @State private var showSummary = false
 
     var body: some View {
         NavigationStack {
-            Group {
-                if viewModel.isLoading && viewModel.stories.isEmpty {
-                    loadingView
-                } else if let error = viewModel.error, viewModel.stories.isEmpty {
-                    errorView(error: error)
-                } else if viewModel.stories.isEmpty {
-                    emptyView
-                } else {
-                    storyList
+            ZStack {
+                Group {
+                    if viewModel.isLoading && viewModel.stories.isEmpty {
+                        loadingView
+                    } else if let error = viewModel.error, viewModel.stories.isEmpty {
+                        errorView(error: error)
+                    } else if viewModel.stories.isEmpty {
+                        emptyView
+                    } else {
+                        storyList
+                    }
+                }
+
+                // Floating AI Button
+                VStack {
+                    Spacer()
+                    HStack {
+                        Spacer()
+                        FloatingAIButton {
+                            showSummary = true
+                        }
+                        .padding(.trailing, 16)
+                        .padding(.bottom, 16)
+                    }
                 }
             }
             .navigationTitle("Hacker News")
@@ -32,6 +48,9 @@ struct FeedView: View {
                 SafariView(url: url)
                     .ignoresSafeArea()
             }
+        }
+        .sheet(isPresented: $showSummary) {
+            SummaryView()
         }
     }
 
