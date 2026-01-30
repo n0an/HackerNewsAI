@@ -69,6 +69,23 @@ struct SummaryView: View {
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 32)
 
+            Button {
+                Task {
+                    await viewModel.forceGenerateSummary()
+                }
+            } label: {
+                HStack {
+                    Image(systemName: "arrow.clockwise")
+                    Text("Generate Summary Anyway")
+                }
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(Color.accentColor.opacity(0.1))
+                .foregroundStyle(.accentColor)
+                .cornerRadius(12)
+            }
+            .padding(.horizontal, 32)
+
             Spacer()
         }
     }

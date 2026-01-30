@@ -29,6 +29,20 @@ class SummaryViewModel {
     }
 
     @MainActor
+    func forceGenerateSummary() async {
+        isLoading = true
+        error = nil
+
+        do {
+            summary = try await service.generateCatchUpSummary(forceRegenerate: true, bypassTimeCheck: true)
+        } catch {
+            self.error = error
+        }
+
+        isLoading = false
+    }
+
+    @MainActor
     func markAsRead() async {
         await service.markAsRead()
     }

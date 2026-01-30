@@ -35,7 +35,7 @@ actor SummaryService {
         }
     }
 
-    func generateCatchUpSummary(forceRegenerate: Bool = false) async throws -> CatchUpSummary {
+    func generateCatchUpSummary(forceRegenerate: Bool = false, bypassTimeCheck: Bool = false) async throws -> CatchUpSummary {
         // Return cached summary if available and recent (within 5 minutes)
         if !forceRegenerate, let cached = cachedSummary,
            Date().timeIntervalSince(cached.generatedAt) < 300 {
@@ -46,7 +46,8 @@ actor SummaryService {
         let timeSinceDescription = await lastVisitService.formattedTimeSinceLastVisit()
 
         // Check if user visited recently - if so, they're "all caught up"
-        if let lastVisit = lastVisit {
+        // Skip this check if bypassTimeCheck is true
+        if !bypassTimeCheck, let lastVisit = lastVisit {
             let timeSinceLastVisit = Date().timeIntervalSince(lastVisit)
 
             if timeSinceLastVisit < minimumTimeBetweenSummaries {
