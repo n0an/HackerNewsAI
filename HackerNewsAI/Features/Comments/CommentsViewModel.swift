@@ -4,7 +4,8 @@ import Observation
 @Observable
 class CommentsViewModel {
     let story: HNStory
-    var comments: [HNComment] = []
+    var commentNodes: [CommentNode] = []
+    var collapsedIDs: Set<Int> = []
     var isLoading = false
     var error: Error?
 
@@ -23,7 +24,7 @@ class CommentsViewModel {
         error = nil
 
         do {
-            comments = try await service.fetchComments(ids: commentIDs)
+            commentNodes = try await service.fetchCommentTree(ids: commentIDs)
         } catch {
             self.error = error
         }

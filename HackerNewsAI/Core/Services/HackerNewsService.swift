@@ -94,8 +94,27 @@ actor HackerNewsService {
                 }
             }
 
-            // Sort by time (oldest first for natural reading order)
-            return comments.sorted { $0.time < $1.time }
+            // Preserve HN ranking order by sorting based on original ids order
+            let idOrder = Dictionary(uniqueKeysWithValues: ids.enumerated().map { ($1, $0) })
+            return comments.sorted { (idOrder[$0.id] ?? 0) < (idOrder[$1.id] ?? 0) }
         }
+    }
+
+    func fetchCommentTree(ids: [Int], depth: Int = 0, maxDepth: Int = 3) async throws -> [CommentNode] {
+        guard depth <= maxDepth else { return [] }
+
+        let comments = try await fetchComments(ids: ids)
+
+        var nodes: [CommentNode] = []
+        for comment in comments {
+            var children: [CommentNode] = []
+            if let kidIDs = comment.kids, !kidIDs.isEmpty {
+                children = try await fetchCommentTree(ids: kidIDs, depth: depth + 1, maxDepth: maxDepth)
+            }
+            let node = CommentNode(id: comment.id, comment: comment, children: children, depth: depth)
+            nodes.append(node)
+        }
+
+        return nodes
     }
 }

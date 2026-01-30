@@ -10,38 +10,43 @@ struct CommentsView: View {
     }
 
     var body: some View {
-        List {
-            // Story header section
-            Section {
+        ScrollView {
+            LazyVStack(alignment: .leading, spacing: 0) {
+                // Story header section
                 StoryHeaderView(story: viewModel.story)
-            }
+                    .padding()
 
-            // Comments section
-            Section {
+                Divider()
+
+                // Comments section
                 if viewModel.isLoading {
                     HStack {
                         Spacer()
                         ProgressView()
                         Spacer()
                     }
-                    .listRowSeparator(.hidden)
+                    .padding(.vertical, 40)
                 } else if let error = viewModel.error {
                     Text("Failed to load comments: \(error.localizedDescription)")
                         .foregroundStyle(.secondary)
-                } else if viewModel.comments.isEmpty {
+                        .padding()
+                } else if viewModel.commentNodes.isEmpty {
                     Text("No comments yet")
                         .foregroundStyle(.secondary)
+                        .padding()
                 } else {
-                    ForEach(viewModel.comments) { comment in
-                        CommentRowView(comment: comment)
+                    commentsHeader
+                        .padding(.horizontal)
+                        .padding(.top)
+
+                    ForEach(viewModel.commentNodes) { node in
+                        CommentRowView(node: node, collapsedIDs: $viewModel.collapsedIDs)
+                            .padding(.horizontal)
                     }
                 }
-            } header: {
-                Text("Comments (\(viewModel.story.commentCount))")
             }
         }
-        .listStyle(.insetGrouped)
-        .navigationTitle("Discussion")
+        .navigationTitle("Comments")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .bottomBar) {
@@ -62,6 +67,12 @@ struct CommentsView: View {
                 BrowserView(url: url)
             }
         }
+    }
+
+    private var commentsHeader: some View {
+        Text("Comments (\(viewModel.story.commentCount))")
+            .font(.headline)
+            .foregroundStyle(.secondary)
     }
 }
 
@@ -111,7 +122,6 @@ struct StoryHeaderView: View {
             .font(.caption)
             .foregroundStyle(.secondary)
         }
-        .padding(.vertical, 4)
     }
 
     private func faviconURL(for domain: String) -> URL? {
