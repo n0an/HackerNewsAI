@@ -10,6 +10,7 @@ struct HNStory: Codable, Identifiable, Equatable {
     let url: String?
     let text: String?
     let type: String
+    let kids: [Int]?
 
     var storyURL: URL? {
         guard let url else { return nil }

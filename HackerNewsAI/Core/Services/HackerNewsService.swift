@@ -65,4 +65,37 @@ actor HackerNewsService {
 
         return Array(todaysStories.prefix(limit))
     }
+
+    func fetchComment(id: Int) async throws -> HNComment? {
+        let url = URL(string: "\(baseURL)/item/\(id).json")!
+        let (data, _) = try await session.data(from: url)
+
+        guard let comment = try? JSONDecoder().decode(HNComment.self, from: data) else {
+            return nil
+        }
+
+        guard comment.type == "comment" else { return nil }
+
+        return comment
+    }
+
+    func fetchComments(ids: [Int]) async throws -> [HNComment] {
+        return try await withThrowingTaskGroup(of: HNComment?.self) { group in
+            for id in ids {
+                group.addTask {
+                    try await self.fetchComment(id: id)
+                }
+            }
+
+            var comments: [HNComment] = []
+            for try await comment in group {
+                if let comment {
+                    comments.append(comment)
+                }
+            }
+
+            // Sort by time (oldest first for natural reading order)
+            return comments.sorted { $0.time < $1.time }
+        }
+    }
 }

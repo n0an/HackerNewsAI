@@ -4,50 +4,41 @@ struct PostRowView: View {
     let story: HNStory
 
     var body: some View {
-        HStack(alignment: .center) {
-            VStack(alignment: .leading, spacing: 8) {
-                // Domain
-                if let domain = story.domain {
-                    HStack(spacing: 6) {
-                        AsyncImage(url: faviconURL(for: domain)) { image in
-                            image
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                        } placeholder: {
-                            Image(systemName: "globe")
-                                .font(.caption2)
-                        }
-                        .frame(width: 14, height: 14)
-                        .clipShape(RoundedRectangle(cornerRadius: 3))
-
-                        Text(domain)
-                            .font(.footnote)
+        VStack(alignment: .leading, spacing: 8) {
+            // Domain
+            if let domain = story.domain {
+                HStack(spacing: 6) {
+                    AsyncImage(url: faviconURL(for: domain)) { image in
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                    } placeholder: {
+                        Image(systemName: "globe")
+                            .font(.caption2)
                     }
-                    .foregroundStyle(.secondary)
-                }
+                    .frame(width: 14, height: 14)
+                    .clipShape(RoundedRectangle(cornerRadius: 3))
 
-                // Title
-                Text(story.title)
-                    .font(.headline)
-                    .fontWeight(.medium)
-                    .foregroundStyle(.primary)
-                    .lineLimit(3)
-
-                // Metadata row
-                HStack(spacing: 12) {
-                    MetadataItem(icon: "person", text: story.by)
-                    MetadataItem(icon: "calendar", text: story.relativeTime)
-                    MetadataItem(icon: "hand.thumbsup", text: "\(story.score)")
-                    MetadataItem(icon: "list.bullet", text: "\(story.commentCount)")
+                    Text(domain)
+                        .font(.footnote)
                 }
+                .foregroundStyle(.secondary)
             }
 
-            Spacer()
+            // Title
+            Text(story.title)
+                .font(.headline)
+                .fontWeight(.medium)
+                .foregroundStyle(.primary)
+                .lineLimit(3)
 
-            Image(systemName: "chevron.right")
-                .font(.caption)
-                .fontWeight(.semibold)
-                .foregroundStyle(Color(.tertiaryLabel))
+            // Metadata row
+            HStack(spacing: 12) {
+                MetadataItem(icon: "person", text: story.by)
+                MetadataItem(icon: "calendar", text: story.relativeTime)
+                MetadataItem(icon: "hand.thumbsup", text: "\(story.score)")
+                MetadataItem(icon: "list.bullet", text: "\(story.commentCount)")
+            }
         }
         .padding(.vertical, 8)
     }
@@ -89,7 +80,8 @@ struct MetadataItem: View {
             descendants: 285,
             url: "https://xda-developers.com/article",
             text: nil,
-            type: "story"
+            type: "story",
+            kids: [100, 101, 102]
         ))
 
         PostRowView(story: HNStory(
@@ -101,7 +93,8 @@ struct MetadataItem: View {
             descendants: 91,
             url: "https://ztechtalk.com/article",
             text: nil,
-            type: "story"
+            type: "story",
+            kids: [200, 201]
         ))
 
         PostRowView(story: HNStory(
@@ -113,7 +106,8 @@ struct MetadataItem: View {
             descendants: 36,
             url: "https://github.com/example/amla",
             text: nil,
-            type: "story"
+            type: "story",
+            kids: nil
         ))
     }
     .listStyle(.plain)

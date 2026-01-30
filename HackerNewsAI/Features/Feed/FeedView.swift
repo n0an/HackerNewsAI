@@ -2,7 +2,6 @@ import SwiftUI
 
 struct FeedView: View {
     @State private var viewModel = FeedViewModel()
-    @State private var selectedStory: HNStory?
     @State private var showSummary = false
 
     var body: some View {
@@ -43,12 +42,6 @@ struct FeedView: View {
                 await viewModel.loadTopStories()
             }
         }
-        .sheet(item: $selectedStory) { story in
-            if let url = story.storyURL {
-                SafariView(url: url)
-                    .ignoresSafeArea()
-            }
-        }
         .sheet(isPresented: $showSummary) {
             SummaryView()
         }
@@ -57,20 +50,16 @@ struct FeedView: View {
     private var storyList: some View {
         List {
             ForEach(viewModel.stories) { story in
-                PostRowView(story: story)
-                    .contentShape(Rectangle())
-                    .onTapGesture {
-                        if story.storyURL != nil {
-                            selectedStory = story
+                NavigationLink(destination: CommentsView(story: story)) {
+                    PostRowView(story: story)
+                }
+                .onAppear {
+                    if story.id == viewModel.stories.last?.id {
+                        Task {
+                            await viewModel.loadMore()
                         }
                     }
-                    .onAppear {
-                        if story.id == viewModel.stories.last?.id {
-                            Task {
-                                await viewModel.loadMore()
-                            }
-                        }
-                    }
+                }
             }
 
             if viewModel.isLoadingMore {
