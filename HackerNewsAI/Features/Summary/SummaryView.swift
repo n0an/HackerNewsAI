@@ -110,7 +110,7 @@ struct SummaryView: View {
 
                 // Summary content
                 if let summaryText = summary.summary {
-                    Text(summaryText)
+                    Text(markdownAttributedString(from: summaryText))
                         .font(.body)
                 }
 
@@ -195,6 +195,10 @@ struct SummaryView: View {
             }
             .buttonStyle(.bordered)
         }
+    }
+
+    private func markdownAttributedString(from text: String) -> AttributedString {
+        (try? AttributedString(markdown: text, options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace))) ?? AttributedString(text)
     }
 }
 
