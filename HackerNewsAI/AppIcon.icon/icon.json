@@ -1,0 +1,34 @@
+{
+  "fill" : "automatic",
+  "groups" : [
+    {
+      "layers" : [
+        {
+          "image-name" : "gpt_1769853770791.png",
+          "name" : "gpt_1769853770791",
+          "position" : {
+            "scale" : 1.2,
+            "translation-in-points" : [
+              -0.6000000000001364,
+              27.140625
+            ]
+          }
+        }
+      ],
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.5
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.5
+      }
+    }
+  ],
+  "supported-platforms" : {
+    "circles" : [
+      "watchOS"
+    ],
+    "squares" : "shared"
+  }
+}
