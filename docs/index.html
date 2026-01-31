@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HackerNewsAI - AI-powered Hacker News Reader</title>
+    <meta name="description" content="HackerNewsAI is an AI-powered Hacker News reader for iOS and macOS. Get personalized catch-up summaries of what you missed.">
+    <link rel="icon" type="image/png" href="icon.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #FF6600;
+            --primary-dark: #E55C00;
+            --bg: #FAFAFA;
+            --text: #1A1A1A;
+            --text-secondary: #666;
+            --card-bg: #FFFFFF;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Hero */
+        .hero {
+            text-align: center;
+            padding: 80px 24px 60px;
+        }
+
+        .app-icon {
+            width: 120px;
+            height: 120px;
+            border-radius: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+            margin-bottom: 24px;
+        }
+
+        h1 {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            letter-spacing: -0.02em;
+        }
+
+        .tagline {
+            font-size: 20px;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+
+        .badges {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 12px;
+            background: var(--card-bg);
+            border: 1px solid #E0E0E0;
+            border-radius: 20px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 28px;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 16px;
+            transition: background 0.2s;
+        }
+
+        .cta-button:hover {
+            background: var(--primary-dark);
+        }
+
+        .cta-button svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Features */
+        .features {
+            padding: 60px 0;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+        }
+
+        .feature-card {
+            background: var(--card-bg);
+            padding: 28px;
+            border-radius: 16px;
+            border: 1px solid #E8E8E8;
+        }
+
+        .feature-icon {
+            font-size: 32px;
+            margin-bottom: 16px;
+        }
+
+        .feature-card h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .feature-card p {
+            font-size: 15px;
+            color: var(--text-secondary);
+        }
+
+        /* LLM Providers */
+        .providers {
+            padding: 60px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 40px;
+        }
+
+        .providers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .provider-card {
+            background: var(--card-bg);
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid #E8E8E8;
+            text-align: center;
+        }
+
+        .provider-card h4 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .provider-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .provider-tag {
+            display: inline-block;
+            padding: 4px 10px;
+            background: #F0F0F0;
+            border-radius: 6px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px 24px;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 36px;
+            }
+
+            .tagline {
+                font-size: 18px;
+            }
+
+            .hero {
+                padding: 60px 24px 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <section class="hero">
+        <div class="container">
+            <img src="icon.png" alt="HackerNewsAI" class="app-icon">
+            <h1>HackerNewsAI</h1>
+            <p class="tagline">AI-powered Hacker News reader for iOS and macOS</p>
+            <div class="badges">
+                <span class="badge">iOS 18+</span>
+                <span class="badge">macOS 15+</span>
+                <span class="badge">Swift 6</span>
+                <span class="badge">MIT License</span>
+            </div>
+            <a href="https://github.com/n0an/HackerNewsAI" class="cta-button">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                View on GitHub
+            </a>
+        </div>
+    </section>
+
+    <section class="features">
+        <div class="container">
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <h3>AI Catch-Up Summaries</h3>
+                    <p>Get a personalized summary of what you missed since your last visit. Never feel out of the loop.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3>Privacy-First</h3>
+                    <p>On-device AI options mean your reading habits stay completely private. Your data never leaves your device.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💬</div>
+                    <h3>Threaded Comments</h3>
+                    <p>Browse comment threads with collapsible replies. Follow discussions with ease.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3>Native SwiftUI</h3>
+                    <p>Built entirely with SwiftUI for iOS and macOS. Fast, fluid, and feels right at home.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="providers">
+        <div class="container">
+            <h2 class="section-title">Choose Your AI</h2>
+            <div class="providers-grid">
+                <div class="provider-card">
+                    <h4>Apple Intelligence</h4>
+                    <p>On-device Apple Foundation Models for maximum privacy</p>
+                    <span class="provider-tag">iOS 26+ / macOS 26+</span>
+                </div>
+                <div class="provider-card">
+                    <h4>MLX (Local)</h4>
+                    <p>Run Qwen3 or Llama models locally on Apple Silicon</p>
+                    <span class="provider-tag">No internet required</span>
+                </div>
+                <div class="provider-card">
+                    <h4>Claude (Anthropic)</h4>
+                    <p>Cloud API with excellent quality summaries</p>
+                    <span class="provider-tag">API key required</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>
+                Made with ❤️ using SwiftUI<br>
+                <a href="https://github.com/n0an/HackerNewsAI">GitHub</a> ·
+                <a href="https://github.com/n0an/HackerNewsAI/blob/main/LICENSE">MIT License</a>
+            </p>
+        </div>
+    </footer>
+</body>
+</html>
