@@ -112,7 +112,8 @@ actor SummaryService {
         for (index, story) in stories.prefix(30).enumerated() {
             let domain = story.domain ?? "self"
             let timeAgo = story.relativeTime
-            prompt += "\(index + 1). [Score: \(story.score), \(timeAgo)] \"\(story.title)\" (\(domain))\n"
+            let url = story.url ?? "https://news.ycombinator.com/item?id=\(story.id)"
+            prompt += "\(index + 1). [Score: \(story.score), \(timeAgo)] \"\(story.title)\" URL: \(url) (\(domain))\n"
         }
 
         prompt += """
@@ -123,6 +124,7 @@ actor SummaryService {
         - Use bullet points with brief explanations
         - Focus on: major announcements, trending discussions, notable launches
         - Keep it conversational and scannable
+        - IMPORTANT: When mentioning story titles, format them as markdown links like this: [Story Title](URL)
         """
 
         return prompt

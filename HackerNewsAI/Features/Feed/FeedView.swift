@@ -36,6 +36,11 @@ struct FeedView: View {
             }
             .navigationTitle("Hacker News")
             .toolbar {
+                if viewModel.isLoading && !viewModel.stories.isEmpty {
+                    ToolbarItem(placement: .principal) {
+                        ProgressView()
+                    }
+                }
                 ToolbarItem(placement: .primaryAction) {
                     Button {
                         showSettings = true

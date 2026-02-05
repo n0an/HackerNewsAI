@@ -128,56 +128,10 @@ struct SummaryView: View {
                 if let summaryText = summary.summary {
                     Text(markdownAttributedString(from: summaryText))
                         .font(.body)
-                }
-
-                // Stories section
-                if !summary.stories.isEmpty {
-                    Divider()
-
-                    Text("Stories")
-                        .font(.headline)
-                        .padding(.top, 8)
-
-                    ForEach(summary.stories.prefix(30)) { story in
-                        Button {
-                            if let url = story.storyURL {
-                                selectedURL = url
-                            }
-                        } label: {
-                            HStack(alignment: .top, spacing: 12) {
-                                Image(systemName: "link")
-                                    .foregroundStyle(.secondary)
-                                    .frame(width: 20)
-
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text(story.title)
-                                        .font(.subheadline)
-                                        .multilineTextAlignment(.leading)
-                                        .foregroundStyle(.primary)
-
-                                    HStack(spacing: 8) {
-                                        if let domain = story.domain {
-                                            Text(domain)
-                                                .font(.caption)
-                                                .foregroundStyle(.secondary)
-                                        }
-                                        Text("\(story.score) points")
-                                            .font(.caption)
-                                            .foregroundStyle(.tertiary)
-                                    }
-                                }
-
-                                Spacer()
-
-                                Image(systemName: "chevron.right")
-                                    .font(.caption)
-                                    .foregroundStyle(.tertiary)
-                            }
-                            .padding(.vertical, 8)
-                        }
-                        .buttonStyle(.plain)
-                        .disabled(story.storyURL == nil)
-                    }
+                        .environment(\.openURL, OpenURLAction { url in
+                            selectedURL = url
+                            return .handled
+                        })
                 }
 
                 Divider()
@@ -198,6 +152,8 @@ struct SummaryView: View {
                     Task {
                         await viewModel.markAsRead()
                         markedAsRead = true
+                        try? await Task.sleep(for: .milliseconds(600))
+                        dismiss()
                     }
                 } label: {
                     HStack {

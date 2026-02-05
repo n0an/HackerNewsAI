@@ -1,5 +1,4 @@
 import SwiftUI
-import WebKit
 
 struct CommentsView: View {
     @State private var viewModel: CommentsViewModel
@@ -97,13 +96,14 @@ struct CommentsView: View {
         #if os(iOS)
         .fullScreenCover(isPresented: $showBrowser) {
             if let url = viewModel.story.storyURL {
-                BrowserView(url: url)
+                SafariView(url: url)
+                    .ignoresSafeArea()
             }
         }
         #else
         .sheet(isPresented: $showBrowser) {
             if let url = viewModel.story.storyURL {
-                BrowserView(url: url)
+                SafariView(url: url)
                     .frame(minWidth: 800, minHeight: 600)
             }
         }
@@ -168,29 +168,6 @@ struct StoryHeaderView: View {
 
     private func faviconURL(for domain: String) -> URL? {
         URL(string: "https://www.google.com/s2/favicons?domain=\(domain)&sz=64")
-    }
-}
-
-struct BrowserView: View {
-    let url: URL
-    @Environment(\.dismiss) private var dismiss
-
-    var body: some View {
-        NavigationStack {
-            WebView(url: url)
-                .ignoresSafeArea(edges: .bottom)
-                .navigationTitle(url.host ?? "Article")
-                #if os(iOS)
-                .navigationBarTitleDisplayMode(.inline)
-                #endif
-                .toolbar {
-                    ToolbarItem(placement: .cancellationAction) {
-                        Button("Done") {
-                            dismiss()
-                        }
-                    }
-                }
-        }
     }
 }
 
