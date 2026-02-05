@@ -8,6 +8,7 @@ struct CatchUpSummary {
     let hasNewStories: Bool
     let isAllCaughtUp: Bool
     let generatedAt: Date
+    let stories: [HNStory]
 
     var isFirstVisit: Bool {
         lastVisit == nil
@@ -21,7 +22,8 @@ struct CatchUpSummary {
             timeSinceLastVisit: timeSince,
             hasNewStories: false,
             isAllCaughtUp: true,
-            generatedAt: Date()
+            generatedAt: Date(),
+            stories: []
         )
     }
 }

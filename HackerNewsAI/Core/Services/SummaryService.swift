@@ -75,7 +75,8 @@ actor SummaryService {
             timeSinceLastVisit: timeSinceDescription,
             hasNewStories: hasNewStories,
             isAllCaughtUp: false,
-            generatedAt: Date()
+            generatedAt: Date(),
+            stories: stories
         )
 
         cachedSummary = summary

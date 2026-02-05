@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct FeedView: View {
+    @Environment(\.scenePhase) private var scenePhase
     @State private var viewModel = FeedViewModel()
     @State private var showSummary = false
     @State private var showSettings = false
@@ -50,6 +51,13 @@ struct FeedView: View {
         .task {
             if viewModel.stories.isEmpty {
                 await viewModel.loadTopStories()
+            }
+        }
+        .onChange(of: scenePhase) {
+            if scenePhase == .active {
+                Task {
+                    await viewModel.refresh()
+                }
             }
         }
         .sheet(isPresented: $showSummary) {
