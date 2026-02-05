@@ -36,16 +36,16 @@ struct FeedView: View {
             }
             .navigationTitle("Hacker News")
             .toolbar {
-                if viewModel.isLoading && !viewModel.stories.isEmpty {
-                    ToolbarItem(placement: .principal) {
-                        ProgressView()
-                    }
-                }
                 ToolbarItem(placement: .primaryAction) {
-                    Button {
-                        showSettings = true
-                    } label: {
-                        Image(systemName: "gearshape")
+                    HStack(spacing: 16) {
+                        if viewModel.isLoading && !viewModel.stories.isEmpty {
+                            ProgressView()
+                        }
+                        Button {
+                            showSettings = true
+                        } label: {
+                            Image(systemName: "gearshape")
+                        }
                     }
                 }
             }
